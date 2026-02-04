@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
 
 export interface Product {
   id: string
@@ -37,7 +37,11 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | undefined>(undefined)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([])
+  const [cart, setCart] = useState<CartItem[]>(() => {
+  if (typeof window === "undefined") return []
+  const saved = localStorage.getItem("cart")
+  return saved ? JSON.parse(saved) : []
+})
   const [wishlist, setWishlist] = useState<Product[]>([])
 
   const addToCart = useCallback((product: Product, quantity = 1) => {
@@ -50,6 +54,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             : item
         )
       }
+      
       return [...prev, { ...product, quantity }]
     })
   }, [])
@@ -71,8 +76,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [removeFromCart])
 
   const clearCart = useCallback(() => {
-    setCart([])
-  }, [])
+  setCart([])
+  localStorage.removeItem("cart")
+}, [])
+
 
   const addToWishlist = useCallback((product: Product) => {
     setWishlist((prev) => {
