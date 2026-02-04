@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { StoreProvider, useStore } from "@/lib/store-context"
+import { useStore } from "@/lib/store-context"
 import { useState } from "react"
 
 function CartContent() {
@@ -263,9 +263,6 @@ function CartContent() {
 }
 
 export default function CartPage() {
-  return (
-    <StoreProvider>
-      <CartContent />
-    </StoreProvider>
-  )
+  return <CartContent />
 }
+
